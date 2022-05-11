@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600%7CUbuntu:300,400,500,700" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+          $.ajax({
+            type:"GET",
+            url: "/getCityId",
+            success: function(data) {
+                  var output = "";
+                   $.each(data, function(a,b){
+                       output += "<option value='"+b.cityId+"'>"+b.cityName+"</option>";
+
+                   });
+                    $("#city_select").append(output);
+                },
+
+        });
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+              $('#info_detail').hide();
+              $('#book_now').hide();
+
+            $("#city_select").change(function(){
+                var cityid = $(this).val();
+
+                $.ajax({
+                    url: '/getTheaters/'+cityid,
+                    type: 'GET',
+                    dataType: 'json',
+                    success:function(response){
+                        $("#theaters_select").empty();
+                        var len = response['premiere']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['premiere']['data'][i]['cinemaId'];
+                            var name = response['premiere']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                        var len = response['imax']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['imax']['data'][i]['cinemaId'];
+                            var name = response['imax']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                        var len = response['all']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['all']['data'][i]['cinemaId'];
+                            var name = response['all']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $("#city_select").change(function(){
+                var cityid = $(this).val();
+
+                $.ajax({
+                    url: '/getTheaters/'+cityid,
+                    type: 'GET',
+                    dataType: 'json',
+                    success:function(response){
+                        $("#theaters_select").empty();
+                        var len = response['premiere']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['premiere']['data'][i]['cinemaId'];
+                            var name = response['premiere']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                        var len = response['imax']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['imax']['data'][i]['cinemaId'];
+                            var name = response['imax']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                        var len = response['all']['data'].length;
+                        for( var i = 0; i<len; i++){
+                            var id = response['all']['data'][i]['cinemaId'];
+                            var name = response['all']['data'][i]['nameCinema'];
+
+                            $("#theaters_select").append("<option value='"+id+"'>"+name+"</option>");
+
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+     <script type="text/javascript">
+        $(document).ready(function(){
+
+            $("#theaters_select").change(function(){
+                var theaters_value = $(this).val();
+                var movie_id = document.getElementById("movie_id").value;
+
+                $.ajax({
+                    url: '/getSchedule/'+ theaters_value +'/'+ movie_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success:function(response){
+                         $('#info_detail').show();
+
+                        $('#name_cinema').text( response['cinema_info']['name'] );
+                        $('#address').text( response['cinema_info']['address'] );
+                        $('#ageRate').text( response['data']['ageRate'] );
+                        $('#dimensions').text( response['data']['dimensions'] );
+                        $('#duration').text( response['data']['duration'] );
+                        $('#price').text( response['data']['price'] );
+                        $('#date').text( response['data']['date'] );
+                        $("#img_movie").attr("src",response['data']['image']);
+
+
+
+
+                        var len = response['data']['schedule'].length;
+                        $("#schedule_select").empty();
+                        for( var i = 0; i<len; i++){
+                            var id = response['data']['schedule'][i]['can_booking'];
+                            var name = response['data']['schedule'][i]['time'];
+                            if (id == 1) {
+                                var status = "YES";
+                            }else{
+                                var status = "NO";
+                            }
+                            $("#schedule_select").append("<option value='"+id+"' data-id='" + status + "'>Time : "+name+", Can be ordered : "+ status +"</option>");
+
+                            $('#book_now').show();
+                        }
+
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-reboot.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-grid.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mCustomScrollbar.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nouislider.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ionicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/plyr.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/photoswipe.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/default-skin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icon/favicon-32x32.png') }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon/favicon-32x32.png')}}">
+    <link rel="apple-touch-icon" sizes="72x72"
+          href="{{ url_for('static', filename='icon/apple-touch-icon-72x72.png')}}">
+    <link rel="apple-touch-icon" sizes="114x114"
+          href="{{ url_for('static', filename='icon/apple-touch-icon-114x114.png')}}">
+    <link rel="apple-touch-icon" sizes="144x144"
+          href="{{ url_for('static', filename='icon/apple-touch-icon-144x144.png')}}">
+
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="Dmitry Volkov">
+    <title>FlixGo – Online Movies, TV Shows & Cinema HTML Template</title>
+
+</head>
+<body class="body">
+
+<!-- header -->
+<header class="header">
+    <div class="header__wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="header__content">
+                        <!-- header logo -->
+                        <a href="/" class="header__logo">
+                            <img src="{{ url_for('static', filename='img/logo.svg')}}" alt="">
+                        </a>
+                        <!-- end header logo -->
+
+                        <!-- header nav -->
+                        <ul class="header__nav">
+                            <!-- dropdown -->
+                            <li class="header__nav-item">
+                                <a href="/" class="header__nav-link">Home</a>
+                            </li>
+                            <li class="header__nav-item">
+                                <a href="/food" class="header__nav-link">Foods & Beverages</a>
+                            </li>
+                            <!-- dropdown -->
+
+                            <!-- end dropdown -->
+                        </ul>
+                        <!-- end header nav -->
+
+                        <!-- header auth -->
+
+                        <!-- end header auth -->
+
+                        <!-- header menu btn -->
+                        <button class="header__btn" type="button">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <!-- end header menu btn -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</header>
+<!-- end header -->
+
+<!-- page title -->
+<section class="section section--first section--bg" data-bg="img/section/section.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section__wrap">
+                    <!-- section title -->
+                    <h2 class="section__title">Book Ticket : {{ get_detail_info_movie['movieName'] }}</h2>
+                     <input id="movie_id" hidden value="{{ movie_id }}">
+                    <!-- end section title -->
+
+                    <!-- breadcrumb -->
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb__item"><a href="#">Home</a></li>
+                        <li class="breadcrumb__item breadcrumb__item--active">Book Ticket</li>
+                    </ul>
+                    <!-- end breadcrumb -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end page title -->
+
+<!-- filter -->
+<div class="filter">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</div>
+<!-- end filter -->
+
+<!-- catalog -->
+<div class="catalog">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h6 class="section__title">Select City</h6>
+                <select id="city_select" style="width: 100%; " class="form-select"></select>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end catalog -->
+
+<!-- catalog -->
+<div class="catalog">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h6 class="section__title">Select Theaters</h6>
+                <select id="theaters_select" style="width: 100%; "  class="form-select"></select>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end catalog -->
+
+<section class="section section--bg" data-bg="{{ url_for('static', filename='img/section/section.jpg') }}" style="background: url({{ url_for('static', filename='img/section/section.jpg') }}) center center / cover no-repeat;">
+		<div class="container">
+			<div class="row">
+				<!-- section title -->
+				<div class="col-12">
+					<h2 id="name_cinema" class="section__title"></h2>
+                    <h3 id="address" class="card__description" style="color:white;"></h3>
+				</div>
+                <div class="col-6 col-sm-12 col-lg-6" id="info_detail">
+					<div class="card card--list">
+						<div class="row">
+							<div class="col-12 col-sm-4">
+								<div class="card__cover">
+									<img src="" alt="" id="img_movie">
+									<a href="#" class="card__play">
+										<i class="icon ion-ios-play"></i>
+									</a>
+								</div>
+							</div>
+
+							<div class="col-12 col-sm-8">
+								<div class="card__content">
+									<h3 class="card__title" id="name_movie"></h3>
+									<span class="card__category">
+										<a id="ageRate"></a>
+										<a id="dimensions"></a>
+                                        <a id="duration"></a>
+									</span>
+
+									<div class="card__wrap">
+                                        <ul class="card__list">
+                                                <li><a id="price"></a></li>
+                                                <li> <a id="date"></a></li>
+                                        </ul>
+									</div>
+
+									<div class="card__description">
+                                        <p id="description">Select Book Time : </p>
+                                            <select id="schedule_select" style="width: 100%; "></select>
+                                    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+				<!-- end section title -->
+
+				<!-- section btn -->
+				<div class="col-12">
+					<a id="book_now" href="#" class="section__btn">Book Now</a>
+				</div>
+				<!-- end section btn -->
+			</div>
+		</div>
+	</section>
+
+
+<!-- footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <!-- footer list -->
+            <div class="col-12 col-md-3">
+                <h6 class="footer__title">Download Our App</h6>
+                <ul class="footer__app">
+                    <li><a href="#"><img src="img/Download_on_the_App_Store_Badge.svg" alt=""></a></li>
+                    <li><a href="#"><img src="img/google-play-badge.png" alt=""></a></li>
+                </ul>
+            </div>
+            <!-- end footer list -->
+
+            <!-- footer list -->
+            <div class="col-6 col-sm-4 col-md-3">
+                <h6 class="footer__title">Resources</h6>
+                <ul class="footer__list">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Pricing Plan</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+            </div>
+            <!-- end footer list -->
+
+            <!-- footer list -->
+            <div class="col-6 col-sm-4 col-md-3">
+                <h6 class="footer__title">Legal</h6>
+                <ul class="footer__list">
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+            <!-- end footer list -->
+
+            <!-- footer list -->
+            <div class="col-12 col-sm-4 col-md-3">
+                <h6 class="footer__title">Contact</h6>
+                <ul class="footer__list">
+                    <li><a href="tel:+18002345678">+1 (800) 234-5678</a></li>
+                    <li><a href="mailto:support@moviego.com">support@flixgo.com</a></li>
+                </ul>
+                <ul class="footer__social">
+                    <li class="facebook"><a href="#"><i class="icon ion-logo-facebook"></i></a></li>
+                    <li class="instagram"><a href="#"><i class="icon ion-logo-instagram"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="icon ion-logo-twitter"></i></a></li>
+                    <li class="vk"><a href="#"><i class="icon ion-logo-vk"></i></a></li>
+                </ul>
+            </div>
+            <!-- end footer list -->
+
+            <!-- footer copyright -->
+            <div class="col-12">
+                <div class="footer__copyright">
+                    <small><a target="_blank" href="https://www.templateshub.net">Templates Hub</a></small>
+
+                    <ul>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- end footer copyright -->
+        </div>
+    </div>
+</footer>
+<!-- end footer -->
+
+<!-- JS -->
+
+
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.mousewheel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wNumb.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plyr.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.morelines.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/photoswipe.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/photoswipe-ui-default.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
