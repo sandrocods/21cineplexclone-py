@@ -17,6 +17,7 @@ helpersAPI = HelpersAPI()
 
 
 @app.route("/details/<id>", methods=['GET'])
+@cache.cached(timeout=900)
 def details(id):
     get_detail_info_movie = helpersAPI.info_movie(movie_id=id)
 
@@ -57,6 +58,7 @@ def food():
 
 
 @app.route("/food/<id>", methods=['GET'])
+@cache.cached(timeout=900)
 def food_detail(id):
     get_food = helpersAPI.get_food(theater_id=id)
     return render_template(
